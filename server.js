@@ -7,6 +7,8 @@ import { execFile, spawn } from 'child_process';
 import multer from 'multer';
 import * as mm from 'music-metadata';
 import ffmpegPath from 'ffmpeg-static';
+import https from 'https';
+import http from 'http';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -284,40 +286,102 @@ app.get('/api/stream/:id', async (req, res) => {
     }
   }
 
-  // If YouTube ID (either from local list or cloud search) — On-Demand direct proxy stream via yt-dlp
+// Cache extracted direct CDN URLs for 4 hours to make repeat plays instantaneous (0ms)
+const streamCache = new Map();
+
+  // If YouTube ID (either from local list or cloud search) — On-Demand direct proxy stream
   if (trackId.startsWith('yt-')) {
     const vidId = trackId.replace('yt-', '');
     const ytUrl = `https://www.youtube.com/watch?v=${vidId}`;
     console.log(`[On-Demand Stream] Direct proxy streaming: ${track?.title || vidId} (${vidId})`);
 
-    res.setHeader('Content-Type', 'audio/mpeg');
-    res.setHeader('Accept-Ranges', 'none');
-    res.setHeader('Transfer-Encoding', 'chunked');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('X-Stream-Mode', 'on-demand-proxy');
+    const getDirectUrl = () => new Promise((resolve, reject) => {
+      if (streamCache.has(vidId)) {
+        const cached = streamCache.get(vidId);
+        if (Date.now() - cached.time < 4 * 3600 * 1000) {
+          return resolve(cached.url);
+        }
+      }
 
-    const ytdlArgs = [
-      '-x',
-      '--audio-format', 'mp3',
-      '--audio-quality', '320K',
-      ...(FFMPEG_DIR ? ['--ffmpeg-location', FFMPEG_DIR] : []),
-      '-o', '-',
-      '--quiet',
-      '--no-warnings',
-      '--no-playlist',
-      ytUrl
-    ];
+      const args = [
+        '-m', 'yt_dlp',
+        '-g',
+        '-f', 'bestaudio[ext=m4a]/bestaudio',
+        '--no-warnings',
+        '--quiet',
+        ytUrl
+      ];
 
-    const env = getSpawnEnv();
-
-    const ytdlProc = spawn(PYTHON_EXE, ['-m', 'yt_dlp', ...ytdlArgs], { env });
-    ytdlProc.stdout.pipe(res);
-    ytdlProc.stderr.on('data', d => console.warn('[yt-dlp proxy]', d.toString().trim()));
-    ytdlProc.on('close', code => {
-      if (!res.writableEnded) res.end();
+      execFile(PYTHON_EXE, args, { timeout: 12000, env: getSpawnEnv() }, (err, stdout) => {
+        if (err || !stdout.trim()) {
+          return reject(err || new Error('No stream URL extracted'));
+        }
+        const lines = stdout.trim().split('\n').filter(Boolean);
+        const directUrl = lines[lines.length - 1].trim();
+        streamCache.set(vidId, { url: directUrl, time: Date.now() });
+        resolve(directUrl);
+      });
     });
-    req.on('close', () => ytdlProc.kill());
-    return;
+
+    try {
+      const directUrl = await getDirectUrl();
+
+      // Forward client Range header to Google CDN for flawless seeking (scrubbing forward/backward)
+      const reqHeaders = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      };
+      if (req.headers.range) {
+        reqHeaders['Range'] = req.headers.range;
+      }
+
+      const client = directUrl.startsWith('https') ? https : http;
+      const proxyReq = client.get(directUrl, { headers: reqHeaders }, (proxyRes) => {
+        const responseHeaders = {
+          'Content-Type': proxyRes.headers['content-type'] || 'audio/mp4',
+          'Accept-Ranges': 'bytes',
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'public, max-age=3600'
+        };
+        if (proxyRes.headers['content-length']) {
+          responseHeaders['Content-Length'] = proxyRes.headers['content-length'];
+        }
+        if (proxyRes.headers['content-range']) {
+          responseHeaders['Content-Range'] = proxyRes.headers['content-range'];
+        }
+
+        res.writeHead(proxyRes.statusCode || 200, responseHeaders);
+        proxyRes.pipe(res);
+      });
+
+      proxyReq.on('error', (e) => {
+        console.warn('[Stream Proxy Error]', e.message);
+        if (!res.headersSent) res.status(502).json({ error: 'Stream error' });
+      });
+
+      req.on('close', () => proxyReq.destroy());
+      return;
+    } catch (err) {
+      console.warn('[Direct Stream Fallback]', err.message);
+      // Fallback: spawn yt-dlp pipe
+      const ytdlArgs = [
+        '-x',
+        '--audio-format', 'mp3',
+        '--audio-quality', '320K',
+        ...(FFMPEG_DIR ? ['--ffmpeg-location', FFMPEG_DIR] : []),
+        '-o', '-',
+        '--quiet',
+        '--no-warnings',
+        '--no-playlist',
+        ytUrl
+      ];
+      const ytdlProc = spawn(PYTHON_EXE, ['-m', 'yt_dlp', ...ytdlArgs], { env: getSpawnEnv() });
+      res.setHeader('Content-Type', 'audio/mpeg');
+      ytdlProc.stdout.pipe(res);
+      ytdlProc.stderr.on('data', d => console.warn('[yt-dlp proxy]', d.toString().trim()));
+      ytdlProc.on('close', () => { if (!res.writableEnded) res.end(); });
+      req.on('close', () => ytdlProc.kill());
+      return;
+    }
   }
 
   res.status(404).json({ error: 'Audio file not available' });
