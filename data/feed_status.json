@@ -1,7 +1,7 @@
 {
-  "state": "syncing",
-  "message": "Checking trending charts: Chaleya (Jawan)",
-  "current_track": "Chaleya (Jawan)",
-  "last_sync": "2026-11-02 23:33:35",
-  "total_synced": 0
+  "state": "idle",
+  "message": "Autonomous sync active. 54 songs live in Sonora library.",
+  "current_track": "",
+  "last_sync": "2026-11-02 23:34:59",
+  "total_synced": 54
 }
