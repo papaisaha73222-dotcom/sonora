@@ -1,12 +1,14 @@
 # Sonora — Autonomous Lossless Music Streaming Platform
-# Render.com 100% Free Tier Docker Deployment Configuration
+# Render.com 100% Free Tier Deployment Configuration
 
 services:
   - type: web
     name: sonora-music
-    env: docker
+    env: node
     plan: free
     region: oregon
+    buildCommand: npm install
+    startCommand: node server.js
     envVars:
       - key: PORT
         value: 10000

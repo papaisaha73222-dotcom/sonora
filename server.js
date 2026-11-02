@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { execFile, spawn } from 'child_process';
 import multer from 'multer';
 import * as mm from 'music-metadata';
+import ffmpegPath from 'ffmpeg-static';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -178,14 +179,19 @@ const PYTHON_EXE = isWin
   ? 'C:\\Users\\USER\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
   : (process.env.PYTHON_PATH || 'python3');
 
-const FFMPEG_DIR = isWin
-  ? 'C:\\Users\\USER\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin'
-  : '';
+const FFMPEG_BIN = ffmpegPath || (isWin
+  ? 'C:\\Users\\USER\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.exe'
+  : 'ffmpeg');
+
+const FFMPEG_DIR = FFMPEG_BIN ? path.dirname(FFMPEG_BIN) : '';
 
 function getSpawnEnv() {
   const env = { ...process.env };
-  if (FFMPEG_DIR) {
-    env.PATH = `${path.dirname(PYTHON_EXE)};${FFMPEG_DIR};${process.env.PATH || ''}`;
+  const dirs = [];
+  if (FFMPEG_DIR) dirs.push(FFMPEG_DIR);
+  if (isWin && PYTHON_EXE) dirs.push(path.dirname(PYTHON_EXE));
+  if (dirs.length > 0) {
+    env.PATH = `${dirs.join(path.delimiter)}${path.delimiter}${process.env.PATH || ''}`;
   }
   return env;
 }
