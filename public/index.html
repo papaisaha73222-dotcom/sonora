@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sonora — Spotify-Style Lossless Streaming</title>
+  <link rel="icon" href="/icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1ed760">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Sonora">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="msapplication-TileColor" content="#1ed760">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- LIQUID GLASS SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">SONORA</span>
+          <span class="brand-tag">SPOTIFY LOSSLESS</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-view="home">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          <span>Home</span>
+        </button>
+        <button class="nav-item" data-view="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Search</span>
+        </button>
+        <button class="nav-item" data-view="library">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span>Your Library</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Quick Actions -->
+      <div class="action-buttons">
+        <button class="btn-sidebar" id="btn-open-auto-import" style="color:var(--spotify-green);">
+          <span class="icon-box heart" style="background:var(--spotify-green); color:#000;">⚡</span>
+          <span>Auto-Import Song</span>
+        </button>
+        <button class="btn-sidebar" id="btn-open-create-playlist">
+          <span class="icon-box plus">+</span>
+          <span>Create Playlist</span>
+        </button>
+        <button class="btn-sidebar" id="btn-view-liked">
+          <span class="icon-box heart">♥</span>
+          <span>Liked Songs</span>
+        </button>
+        <button class="btn-sidebar upload-btn" id="btn-open-upload">
+          <span class="icon-box upload">↑</span>
+          <span>Upload Audio File</span>
+        </button>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Playlists List -->
+      <div class="sidebar-playlists" id="sidebar-playlists-list"></div>
+
+      <!-- Audiophile Badge Card -->
+      <div class="audiophile-badge-card">
+        <div class="badge-header">
+          <span class="dot-live"></span>
+          <span>AUTO-SYNC ACTIVE</span>
+        </div>
+        <p>Drop any audio into the folder or import by song name — updates live!</p>
+        <div class="specs-pill">24-bit / 96kHz Lossless</div>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEW AREA -->
+    <main class="main-content" id="main-content">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <div class="search-box" id="top-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search-input" placeholder="Search songs, artists, genres, or moods...">
+          <button class="clear-search-btn" id="btn-clear-search" style="display:none;">&times;</button>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:14px;">
+          <button class="btn-primary" id="btn-top-auto-import" style="width:auto; padding:8px 18px; font-size:0.85rem; box-shadow:none;">
+            <span>⚡ Import Song by Name/URL</span>
+          </button>
+          <div class="top-bar-stats" id="top-stats-pill">
+            <span class="stat-item"><strong id="stat-tracks-count">18</strong> Songs</span>
+            <span class="stat-dot">•</span>
+            <span class="stat-item highlight"><strong id="stat-lossless-count">18</strong> Lossless & HQ</span>
+            <span class="stat-dot">•</span>
+            <span class="stat-item free-pill">Free</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Main Content -->
+      <div class="content-scroll" id="content-scroll">
+        <div id="view-container"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- FLOATING LIQUID GLASS PLAYER BAR -->
+  <footer class="player-bar">
+    <div class="player-left">
+      <img src="covers/cover_spotify_tophits.svg" alt="Cover" class="player-cover" id="player-cover">
+      <div class="player-track-meta">
+        <div class="track-title-row">
+          <span class="player-title" id="player-title">Select a track</span>
+          <span class="quality-badge" id="player-badge">LOSSLESS</span>
+        </div>
+        <span class="player-artist" id="player-artist">Sonora Audio Engine</span>
+      </div>
+      <button class="player-like-btn" id="player-like-btn" title="Save to Liked Songs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </button>
+    </div>
+
+    <div class="player-center">
+      <div class="playback-controls">
+        <button class="ctrl-btn" id="btn-shuffle" title="Shuffle">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+        </button>
+        <button class="ctrl-btn" id="btn-prev" title="Previous">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6,6 6,18 8,18 8,6"/><polygon points="18,6 10,12 18,18"/></svg>
+        </button>
+        <button class="play-btn" id="btn-play" title="Play">
+          <svg viewBox="0 0 24 24" fill="currentColor" id="play-icon"><polygon points="8,5 19,12 8,19"/></svg>
+        </button>
+        <button class="ctrl-btn" id="btn-next" title="Next">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6,6 14,12 6,18"/><polygon points="16,6 16,18 18,18 18,6"/></svg>
+        </button>
+        <button class="ctrl-btn" id="btn-repeat" title="Repeat">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+        </button>
+      </div>
+
+      <div class="progress-bar-container">
+        <span class="time-stamp" id="current-time">0:00</span>
+        <div class="progress-track" id="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+          <div class="progress-thumb" id="progress-thumb"></div>
+        </div>
+        <span class="time-stamp" id="total-duration">0:00</span>
+      </div>
+    </div>
+
+    <div class="player-right">
+      <div class="visualizer-container" title="Audio Spectrum Visualizer">
+        <canvas id="visualizer-canvas" width="100" height="32"></canvas>
+      </div>
+
+      <button class="ctrl-btn" id="btn-audio-specs" title="Inspect Audio Quality Specs">
+        <span class="hires-pill">HI-RES</span>
+      </button>
+
+      <div class="volume-container">
+        <button class="ctrl-btn" id="btn-mute">
+          <svg viewBox="0 0 24 24" fill="currentColor" id="volume-icon">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+        </button>
+        <div class="volume-track" id="volume-track">
+          <div class="volume-fill" id="volume-fill" style="width: 80%;"></div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODALS -->
+
+  <!-- 1. Auto-Import Song by Name or URL Modal -->
+  <div class="modal-overlay" id="auto-import-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>⚡ Auto-Import Any Song</h3>
+        <button class="modal-close-btn" id="btn-close-auto-import">&times;</button>
+      </div>
+      <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px;">
+        Type any song title, artist, or paste a YouTube URL. Sonora will automatically fetch it in 320kbps / lossless quality and add it to your library!
+      </p>
+      <form id="auto-import-form">
+        <div class="form-group">
+          <label>Song Title or URL</label>
+          <input type="text" id="auto-import-query" placeholder="e.g. Arijit Singh Chaleya or YouTube Link" required>
+        </div>
+        <div id="import-status-notice" style="display:none; padding:10px 14px; border-radius:8px; font-size:0.85rem; font-weight:700; margin-bottom:14px;"></div>
+        <button type="submit" class="btn-primary" id="btn-submit-auto-import">
+          <span>Search & Import to Sonora</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Audio Specs Inspector Modal -->
+  <div class="modal-overlay" id="specs-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Lossless Audio Stream Diagnostics</h3>
+        <button class="modal-close-btn" id="btn-close-specs">&times;</button>
+      </div>
+      <div class="specs-grid" id="specs-modal-content"></div>
+    </div>
+  </div>
+
+  <!-- 3. Upload Track Modal -->
+  <div class="modal-overlay" id="upload-modal">
+    <div class="modal-card upload-modal-card">
+      <div class="modal-header">
+        <h3>Upload Lossless Audio File</h3>
+        <button class="modal-close-btn" id="btn-close-upload">&times;</button>
+      </div>
+      <form id="upload-form" class="upload-form">
+        <div class="drop-zone" id="audio-drop-zone">
+          <div class="drop-zone-icon">🎵</div>
+          <h4>Drop FLAC, WAV, MP3, or AAC files here</h4>
+          <p>Full 24-bit/96kHz & 16-bit Lossless metadata preserved without re-encoding</p>
+          <input type="file" id="audio-file-input" name="audio" accept=".flac,.wav,.mp3,.ogg,.opus,.m4a,.aac,.webm" required>
+        </div>
+
+        <div class="file-chosen-notice" id="file-chosen-notice" style="display:none;"></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Track Title</label>
+            <input type="text" id="upload-title" name="title" placeholder="Auto-detected from file if blank">
+          </div>
+          <div class="form-group">
+            <label>Artist Name</label>
+            <input type="text" id="upload-artist" name="artist" placeholder="Auto-detected from file if blank">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" id="btn-submit-upload">
+          <span>Upload & Stream In Lossless Quality</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <audio id="audio-player" crossorigin="anonymous" preload="auto"></audio>
+  <div class="toast-container" id="toast-container"></div>
+  <script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          console.log('[Sonora PWA] Service Worker registered:', reg.scope);
+        }).catch(err => {
+          console.warn('[Sonora PWA] SW registration failed:', err);
+        });
+      });
+    }
+  </script>
+  <script src="js/app.js" type="module"></script>
+</body>
+</html>
