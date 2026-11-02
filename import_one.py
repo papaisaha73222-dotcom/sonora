@@ -1,6 +1,12 @@
 import os
 import sys
 import json
+
+SONORA_DIR = os.path.dirname(os.path.abspath(__file__))
+BIN_YTDLP = os.path.join(SONORA_DIR, "bin", "yt-dlp")
+if os.path.exists(BIN_YTDLP):
+    sys.path.insert(0, BIN_YTDLP)
+
 import yt_dlp
 import urllib.request
 

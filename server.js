@@ -212,6 +212,24 @@ const FFMPEG_BIN = ffmpegPath || (isWin
 
 const FFMPEG_DIR = FFMPEG_BIN ? path.dirname(FFMPEG_BIN) : '';
 
+const LOCAL_YTDLP_BIN = path.join(__dirname, 'bin', 'yt-dlp');
+if (!isWin && fs.existsSync(LOCAL_YTDLP_BIN)) {
+  try { fs.chmodSync(LOCAL_YTDLP_BIN, 0o755); } catch (_) {}
+}
+
+function getYtDlpRunner() {
+  if (fs.existsSync(LOCAL_YTDLP_BIN)) {
+    if (isWin) {
+      return { bin: PYTHON_EXE, prefixArgs: [LOCAL_YTDLP_BIN] };
+    }
+    return { bin: PYTHON_EXE, fallbackBin: LOCAL_YTDLP_BIN, prefixArgs: [LOCAL_YTDLP_BIN] };
+  }
+  if (isWin) {
+    return { bin: PYTHON_EXE, prefixArgs: ['-m', 'yt_dlp'] };
+  }
+  return { bin: 'yt-dlp', prefixArgs: [] };
+}
+
 function getSpawnEnv() {
   const env = { ...process.env };
   const dirs = [];
@@ -328,24 +346,32 @@ const streamCache = new Map();
         }
       }
 
+      const runner = getYtDlpRunner();
       const args = [
-        '-m', 'yt_dlp',
+        ...runner.prefixArgs,
         '-g',
-        '-f', 'bestaudio[ext=m4a]/bestaudio',
+        '-f', 'bestaudio[ext=m4a]/bestaudio/best',
         '--no-warnings',
         '--quiet',
         ytUrl
       ];
 
-      execFile(PYTHON_EXE, args, { timeout: 12000, env: getSpawnEnv() }, (err, stdout) => {
-        if (err || !stdout.trim()) {
-          return reject(err || new Error('No stream URL extracted'));
-        }
-        const lines = stdout.trim().split('\n').filter(Boolean);
-        const directUrl = lines[lines.length - 1].trim();
-        streamCache.set(vidId, { url: directUrl, time: Date.now() });
-        resolve(directUrl);
-      });
+      const runExtract = (binToUse) => {
+        execFile(binToUse, args, { timeout: 15000, env: getSpawnEnv() }, (err, stdout) => {
+          if (err || !stdout.trim()) {
+            if (binToUse === runner.bin && runner.fallbackBin) {
+              return runExtract(runner.fallbackBin);
+            }
+            return reject(err || new Error('No stream URL extracted'));
+          }
+          const lines = stdout.trim().split('\n').filter(Boolean);
+          const directUrl = lines[lines.length - 1].trim();
+          streamCache.set(vidId, { url: directUrl, time: Date.now() });
+          resolve(directUrl);
+        });
+      };
+
+      runExtract(runner.bin);
     });
 
     try {
@@ -388,7 +414,9 @@ const streamCache = new Map();
     } catch (err) {
       console.warn('[Direct Stream Fallback]', err.message);
       // Fallback: spawn yt-dlp pipe
+      const runner = getYtDlpRunner();
       const ytdlArgs = [
+        ...runner.prefixArgs,
         '-x',
         '--audio-format', 'mp3',
         '--audio-quality', '320K',
@@ -399,11 +427,31 @@ const streamCache = new Map();
         '--no-playlist',
         ytUrl
       ];
-      const ytdlProc = spawn(PYTHON_EXE, ['-m', 'yt_dlp', ...ytdlArgs], { env: getSpawnEnv() });
-      res.setHeader('Content-Type', 'audio/mpeg');
-      ytdlProc.stdout.pipe(res);
+      const ytdlProc = spawn(runner.bin, ytdlArgs, { env: getSpawnEnv() });
+      let headersSent = false;
+
+      ytdlProc.stdout.on('data', (chunk) => {
+        if (!headersSent) {
+          res.writeHead(200, {
+            'Content-Type': 'audio/mpeg',
+            'Accept-Ranges': 'none',
+            'Access-Control-Allow-Origin': '*'
+          });
+          headersSent = true;
+        }
+        res.write(chunk);
+      });
+
       ytdlProc.stderr.on('data', d => console.warn('[yt-dlp proxy]', d.toString().trim()));
-      ytdlProc.on('close', () => { if (!res.writableEnded) res.end(); });
+
+      ytdlProc.on('close', () => {
+        if (!headersSent) {
+          res.status(502).json({ error: 'Stream extraction failed' });
+        } else if (!res.writableEnded) {
+          res.end();
+        }
+      });
+
       req.on('close', () => ytdlProc.kill());
       return;
     }
@@ -466,8 +514,9 @@ app.get('/api/search-cloud', (req, res) => {
   }
 
   const searchArg = `ytsearch8:${query} audio`;
+  const runner = getYtDlpRunner();
   const ytdlArgs = [
-    '-m', 'yt_dlp',
+    ...runner.prefixArgs,
     searchArg,
     '--dump-json',
     '--flat-playlist',
@@ -477,7 +526,7 @@ app.get('/api/search-cloud', (req, res) => {
 
   const env = getSpawnEnv();
 
-  execFile(PYTHON_EXE, ytdlArgs, { timeout: 15000, env }, (err, stdout, stderr) => {
+  execFile(runner.bin, ytdlArgs, { timeout: 15000, env }, (err, stdout, stderr) => {
     if (err) {
       console.warn('[Cloud Search Warning]', err.message);
       return res.json({ results: [] });

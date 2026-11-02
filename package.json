@@ -5,7 +5,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "build": "pip install yt-dlp || pip3 install yt-dlp || true",
+    "postinstall": "chmod +x bin/yt-dlp 2>/dev/null || true",
+    "build": "chmod +x bin/yt-dlp 2>/dev/null || true",
     "start": "node server.js",
     "dev": "node server.js"
   },

@@ -554,6 +554,16 @@ class SonoraApp {
       }
     });
 
+    this.audio.addEventListener('error', (e) => {
+      console.warn('Audio playback error:', e, this.audio.error);
+      this.isPlaying = false;
+      this.updatePlayBtnState();
+      this.showToast('Audio stream reconnecting or advancing...', '🔄');
+      if (this.isAutoplay) {
+        setTimeout(() => this.playAutoplayNext(), 1500);
+      }
+    });
+
     this.progressTrack.addEventListener('click', (e) => {
       const rect = this.progressTrack.getBoundingClientRect();
       const pos = (e.clientX - rect.left) / rect.width;

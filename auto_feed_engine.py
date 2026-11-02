@@ -3,6 +3,12 @@ import sys
 import json
 import time
 import urllib.request
+
+SONORA_DIR = os.path.dirname(os.path.abspath(__file__))
+BIN_YTDLP = os.path.join(SONORA_DIR, "bin", "yt-dlp")
+if os.path.exists(BIN_YTDLP):
+    sys.path.insert(0, BIN_YTDLP)
+
 import yt_dlp
 
 sys.stdout.reconfigure(encoding='utf-8')
