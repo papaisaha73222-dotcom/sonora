@@ -1,15 +1,15 @@
 {
   "tracks": [
     {
-      "id": "yt-PCBZOSM8h5U",
-      "title": "I Had Some Help",
-      "artist": "Post Malone, Morgan Wallen",
-      "album": "Global Spotify Top Viral",
-      "genre": "Global Pop",
+      "id": "yt-mZQH8CPQ-wo",
+      "title": "With You",
+      "artist": "AP Dhillon",
+      "album": "Desi Hip Hop & Punjabi",
+      "genre": "Desi Hip Hop",
       "year": 2026,
-      "filename": "PCBZOSM8h5U.mp3",
-      "cover": "/covers/cover_PCBZOSM8h5U.jpg",
-      "duration": 178,
+      "filename": "mZQH8CPQ-wo.mp3",
+      "cover": "/covers/cover_mZQH8CPQ-wo.jpg",
+      "duration": 155,
       "audioQuality": "HQ MASTER (320kbps)",
       "badgeColor": "#1ed760",
       "specs": {
@@ -20,51 +20,7 @@
         "channels": 2
       },
       "license": "Spotify & YT Music Auto-Feed",
-      "plays": 254450
-    },
-    {
-      "id": "yt-H5v3kku4y6Q",
-      "title": "As It Was",
-      "artist": "Harry Styles",
-      "album": "Global Spotify Top Viral",
-      "genre": "Global Pop",
-      "year": 2026,
-      "filename": "H5v3kku4y6Q.mp3",
-      "cover": "/covers/cover_H5v3kku4y6Q.jpg",
-      "duration": 166,
-      "audioQuality": "HQ MASTER (320kbps)",
-      "badgeColor": "#1ed760",
-      "specs": {
-        "format": "MP3 / 320kbps",
-        "sampleRate": 44100,
-        "bitDepth": 16,
-        "bitrate": "320 kbps",
-        "channels": 2
-      },
-      "license": "Spotify & YT Music Auto-Feed",
-      "plays": 254150
-    },
-    {
-      "id": "yt-V9PVRfjEBTI",
-      "title": "Birds of a Feather",
-      "artist": "Billie Eilish",
-      "album": "Global Spotify Top Viral",
-      "genre": "Global Pop",
-      "year": 2026,
-      "filename": "V9PVRfjEBTI.mp3",
-      "cover": "/covers/cover_V9PVRfjEBTI.jpg",
-      "duration": 231,
-      "audioQuality": "HQ MASTER (320kbps)",
-      "badgeColor": "#1ed760",
-      "specs": {
-        "format": "MP3 / 320kbps",
-        "sampleRate": 44100,
-        "bitDepth": 16,
-        "bitrate": "320 kbps",
-        "channels": 2
-      },
-      "license": "Spotify & YT Music Auto-Feed",
-      "plays": 255775
+      "plays": 253875
     },
     {
       "id": "yt-Wpm2kgsUoA0",
@@ -1200,13 +1156,14 @@
         "yt-eVli-tstM5E",
         "yt-V9PVRfjEBTI",
         "yt-fHI8X4OXluQ",
-        "yt-WHuBW3qKm9g",
-        "yt-H5v3kku4y6Q",
+        "yt-TUVcZfQe-Kw",
+        "yt-V1Z586zoeeE",
         "yt-PCBZOSM8h5U",
         "yt-HU08BcK5SUY",
+        "yt-WHuBW3qKm9g",
+        "yt-H5v3kku4y6Q",
         "yt-kPa7bsKwL-c",
         "yt-d5gf9dXbPi0",
-        "yt-V1Z586zoeeE",
         "yt-11T6kF66dKY",
         "yt-Oa_RSwwpPaA",
         "yt-51zjlMhdSTE"
@@ -1243,11 +1200,11 @@
         "yt-9c1NIrAqXe4",
         "yt-a7V9bUwc4cU",
         "yt-L-arhlgPiy8",
-        "yt-vYsfSlEBh5Y",
+        "yt-d210Ls13Gx0",
         "yt-5hJpFu3vPc0",
         "yt-O8yq399dsyk",
         "yt-GyfaHkxZnlo",
-        "yt-d210Ls13Gx0",
+        "yt-vYsfSlEBh5Y",
         "yt--feVteC_gGM",
         "track-bangla-acoustic"
       ]
@@ -1272,9 +1229,10 @@
       "description": "Top streaming Punjabi rap and Desi Hip Hop chartbusters.",
       "cover": "/covers/cover_spotify_tophits.svg",
       "trackIds": [
-        "yt-fe9udc210tM",
+        "yt-mZQH8CPQ-wo",
         "yt-QYvfY4MtLAI",
         "yt-A66TYFdz8YA",
+        "yt-fe9udc210tM",
         "yt-n_FCrCQ6-bA"
       ]
     }

@@ -2224,4 +2224,42 @@ body::before {
   color: #fff;
 }
 
+/* Endless Radio & Smart Autoplay UI */
+.player-radio-indicator {
+  font-size: 0.68rem;
+  color: var(--spotify-green);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: block;
+  margin-top: 1px;
+  animation: pulseGlow 2.5s infinite alternate;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+@keyframes pulseGlow {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; text-shadow: 0 0 8px rgba(30, 215, 96, 0.6); }
+}
+
+.ctrl-btn#btn-autoplay.active {
+  color: var(--spotify-green) !important;
+  position: relative;
+}
+
+.ctrl-btn#btn-autoplay.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--spotify-green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--spotify-green);
+}
+
 

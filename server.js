@@ -465,6 +465,121 @@ app.post('/api/tracks/save-cloud', (req, res) => {
 });
 
 // ==========================================
+// 4. Algorithmic Smart Radio & Endless Autoplay Recommendations
+// (Matches YouTube Music & Spotify algorithmic Radio RD queues)
+// ==========================================
+const recommendationCache = new Map();
+
+app.get('/api/recommendations', (req, res) => {
+  const trackId = (req.query.trackId || '').trim();
+  const artist = (req.query.artist || '').trim();
+  const title = (req.query.title || '').trim();
+
+  let videoId = null;
+  if (trackId.startsWith('yt-')) {
+    videoId = trackId.slice(3);
+  }
+
+  const cacheKey = `${videoId || ''}-${artist}-${title}`.toLowerCase();
+  if (recommendationCache.has(cacheKey)) {
+    return res.json({ recommendations: recommendationCache.get(cacheKey) });
+  }
+
+  let ytdlTarget = '';
+  if (videoId) {
+    ytdlTarget = `https://www.youtube.com/watch?v=${videoId}&list=RD${videoId}`;
+  } else if (artist) {
+    ytdlTarget = `ytsearch10:${artist} ${title} songs mix audio`;
+  } else {
+    ytdlTarget = `ytsearch10:top global music hits audio`;
+  }
+
+  const ytdlArgs = [
+    '-m', 'yt_dlp',
+    ytdlTarget,
+    '--dump-json',
+    '--flat-playlist',
+    '--playlist-end', '10',
+    '--no-warnings',
+    '--quiet'
+  ];
+
+  const env = {
+    ...process.env,
+    PATH: `${path.dirname(PYTHON_EXE)};${FFMPEG_DIR};${process.env.PATH || ''}`
+  };
+
+  execFile(PYTHON_EXE, ytdlArgs, { timeout: 15000, env }, (err, stdout) => {
+    if (err) {
+      console.warn('[Recommendation Warning]', err.message);
+      return res.json({ recommendations: [] });
+    }
+
+    try {
+      const lines = stdout.trim().split('\n').filter(Boolean);
+      const recommendations = [];
+      const db = getDB();
+      const localMap = new Map(db.tracks.map(t => [t.id, t]));
+
+      for (const line of lines) {
+        try {
+          const item = JSON.parse(line);
+          const vidId = item.id;
+          if (!vidId) continue;
+          if (videoId && vidId === videoId) continue; // Don't recommend the exact same video currently playing
+
+          const recId = `yt-${vidId}`;
+          if (localMap.has(recId)) {
+            recommendations.push({ ...localMap.get(recId), isRadioRecommendation: true });
+            continue;
+          }
+
+          const rawTitle = item.title || 'Unknown Title';
+          const cleanTitle = rawTitle.split('(')[0].split('[')[0].replace(/official\s*(audio|video|lyric video|music video)/gi, '').trim();
+          const recArtist = item.uploader || item.channel || artist || 'Artist';
+          const duration = item.duration || 210;
+          const thumb = item.thumbnails?.[0]?.url || item.thumbnail || `https://i.ytimg.com/vi/${vidId}/hqdefault.jpg`;
+
+          recommendations.push({
+            id: recId,
+            title: cleanTitle,
+            artist: recArtist,
+            album: `${recArtist} Radio`,
+            genre: 'Smart Radio Mix',
+            year: 2026,
+            filename: `${vidId}.mp3`,
+            cover: thumb,
+            duration,
+            audioQuality: 'HQ STREAM (320kbps)',
+            badgeColor: '#1ed760',
+            specs: {
+              format: 'STREAM / 320k',
+              sampleRate: 44100,
+              bitDepth: 16,
+              bitrate: '320 kbps',
+              channels: 2
+            },
+            license: 'Algorithmic Smart Radio Stream',
+            isLocal: false,
+            isRadioRecommendation: true
+          });
+        } catch (e) {}
+      }
+
+      if (recommendationCache.size > 200) {
+        const firstKey = recommendationCache.keys().next().value;
+        recommendationCache.delete(firstKey);
+      }
+      recommendationCache.set(cacheKey, recommendations);
+
+      res.json({ recommendations });
+    } catch (parseErr) {
+      res.json({ recommendations: [] });
+    }
+  });
+});
+
+// ==========================================
 // 5. Track & Catalog Endpoints
 // ==========================================
 app.get('/api/tracks', (req, res) => {

@@ -1,7 +1,7 @@
 {
   "state": "idle",
-  "message": "Autonomous sync active. 54 songs live in Sonora library.",
+  "message": "Autonomous sync active. 52 songs live in Sonora library.",
   "current_track": "",
-  "last_sync": "2026-11-02 23:34:59",
-  "total_synced": 54
+  "last_sync": "2026-11-02 23:53:42",
+  "total_synced": 52
 }

@@ -32,6 +32,12 @@ class SonoraApp {
     this.nextBtn = document.getElementById('btn-next');
     this.shuffleBtn = document.getElementById('btn-shuffle');
     this.repeatBtn = document.getElementById('btn-repeat');
+    this.autoplayBtn = document.getElementById('btn-autoplay');
+    this.radioIndicator = document.getElementById('player-radio-indicator');
+    this.isAutoplay = localStorage.getItem('sonora_autoplay') !== 'false';
+    this.radioQueue = [];
+    this.playedHistory = new Set();
+    this.isFetchingRadio = false;
     this.playerCover = document.getElementById('player-cover');
     this.playerTitle = document.getElementById('player-title');
     this.playerArtist = document.getElementById('player-artist');
@@ -293,9 +299,10 @@ class SonoraApp {
     draw();
   }
 
-  selectTrack(track, autoPlay = true) {
+  selectTrack(track, autoPlay = true, fromAutoplay = false) {
     this.currentTrack = track;
     this.currentIndex = this.tracks.findIndex(t => t.id === track.id);
+    this.playedHistory.add(track.id);
 
     this.audio.src = `/api/stream/${track.id}`;
 
@@ -303,7 +310,16 @@ class SonoraApp {
     this.playerTitle.innerText = track.title;
     this.playerArtist.innerText = track.artist;
     this.playerCover.src = track.cover;
-    this.playerBadge.innerText = track.audioQuality.replace('HI-RES ', '');
+    this.playerBadge.innerText = (track.audioQuality || 'HQ STREAM').replace('HI-RES ', '');
+
+    if (this.radioIndicator) {
+      if (this.isAutoplay) {
+        this.radioIndicator.style.display = 'block';
+        this.radioIndicator.innerText = `✨ Endless Radio: Similar to ${track.artist}`;
+      } else {
+        this.radioIndicator.style.display = 'none';
+      }
+    }
 
     if (track.isFavorite) {
       this.playerLikeBtn.classList.add('liked');
@@ -319,8 +335,17 @@ class SonoraApp {
 
     // Update Media Session API (lock-screen controls for Android/iOS)
     this.updateMediaSession(track);
-
     this.highlightActiveRow();
+
+    // If user manually changed track, clear old radio queue to tune to the new track's vibe
+    if (!fromAutoplay) {
+      this.radioQueue = [];
+    }
+
+    // Pre-fetch similar tracks in background for zero-gap infinite playback
+    if (this.isAutoplay && this.radioQueue.length < 4) {
+      this.prefetchRadioRecommendations(track);
+    }
   }
 
   updateMediaSession(track) {
@@ -394,6 +419,10 @@ class SonoraApp {
   }
 
   playNext() {
+    if (this.isAutoplay) {
+      this.playAutoplayNext();
+      return;
+    }
     if (this.tracks.length === 0) return;
     if (this.isShuffle) {
       const rand = Math.floor(Math.random() * this.tracks.length);
@@ -402,6 +431,104 @@ class SonoraApp {
       let nextIdx = this.currentIndex + 1;
       if (nextIdx >= this.tracks.length) nextIdx = 0;
       this.selectTrack(this.tracks[nextIdx], true);
+    }
+  }
+
+  async playAutoplayNext() {
+    // 1. If we have pre-fetched similar tracks matching the current song's vibe:
+    if (this.radioQueue && this.radioQueue.length > 0) {
+      const nextTrack = this.radioQueue.shift();
+      if (!this.tracks.some(t => t.id === nextTrack.id)) {
+        this.tracks.push(nextTrack);
+      }
+      this.showToast(`✨ Endless Radio: Autoplaying "${nextTrack.title}" (${nextTrack.artist})`, '📻');
+      this.selectTrack(nextTrack, true, true);
+      if (this.radioQueue.length < 3) {
+        this.prefetchRadioRecommendations(nextTrack);
+      }
+      return;
+    }
+
+    // 2. If queue is temporarily empty, fetch live recommendation directly:
+    if (this.currentTrack) {
+      try {
+        const recs = await this.fetchRadioDirect(this.currentTrack);
+        if (recs && recs.length > 0) {
+          const validRecs = recs.filter(t => !this.playedHistory.has(t.id) && t.id !== this.currentTrack.id);
+          const nextTrack = validRecs[0] || recs[0];
+          this.radioQueue = (validRecs.length > 1 ? validRecs.slice(1) : recs.slice(1));
+          if (!this.tracks.some(t => t.id === nextTrack.id)) {
+            this.tracks.push(nextTrack);
+          }
+          this.showToast(`✨ Endless Radio: Autoplaying "${nextTrack.title}" (${nextTrack.artist})`, '📻');
+          this.selectTrack(nextTrack, true, true);
+          return;
+        }
+      } catch (err) {
+        console.warn('Live radio fetch error:', err);
+      }
+    }
+
+    // 3. Fallback: find song with same artist or genre in loaded catalog
+    if (this.currentTrack && this.tracks.length > 1) {
+      const sameVibe = this.tracks.filter(t =>
+        t.id !== this.currentTrack.id &&
+        !this.playedHistory.has(t.id) &&
+        (t.artist === this.currentTrack.artist || t.genre === this.currentTrack.genre)
+      );
+      if (sameVibe.length > 0) {
+        const nextTrack = sameVibe[Math.floor(Math.random() * sameVibe.length)];
+        this.showToast(`✨ Endless Radio: Autoplaying "${nextTrack.title}"`, '📻');
+        this.selectTrack(nextTrack, true, true);
+        return;
+      }
+    }
+
+    // 4. Default next in track list
+    if (this.tracks.length > 0) {
+      let nextIdx = this.currentIndex + 1;
+      if (nextIdx >= this.tracks.length) nextIdx = 0;
+      this.selectTrack(this.tracks[nextIdx], true, true);
+    }
+  }
+
+  async prefetchRadioRecommendations(track) {
+    if (!track || this.isFetchingRadio) return;
+    this.isFetchingRadio = true;
+    try {
+      const recs = await this.fetchRadioDirect(track);
+      if (recs && recs.length > 0) {
+        const fresh = recs.filter(t => 
+          !this.playedHistory.has(t.id) &&
+          !this.radioQueue.some(q => q.id === t.id) &&
+          t.id !== track.id
+        );
+        this.radioQueue.push(...fresh);
+        if (this.radioIndicator && this.radioQueue.length > 0) {
+          this.radioIndicator.innerText = `✨ Up Next: ${this.radioQueue[0].title} (${this.radioQueue[0].artist})`;
+        }
+      }
+    } catch (e) {
+      console.warn('Radio prefetch failed:', e);
+    } finally {
+      this.isFetchingRadio = false;
+    }
+  }
+
+  async fetchRadioDirect(track) {
+    if (!track) return [];
+    try {
+      const params = new URLSearchParams({
+        trackId: track.id || '',
+        artist: track.artist || '',
+        title: track.title || ''
+      });
+      const res = await fetch(`/api/recommendations?${params.toString()}`);
+      const data = await res.json();
+      return data.recommendations || [];
+    } catch (e) {
+      console.warn('fetchRadioDirect error:', e);
+      return [];
     }
   }
 
@@ -433,6 +560,8 @@ class SonoraApp {
       if (this.isRepeat) {
         this.audio.currentTime = 0;
         this.play();
+      } else if (this.isAutoplay) {
+        this.playAutoplayNext();
       } else {
         this.playNext();
       }
@@ -985,6 +1114,22 @@ class SonoraApp {
       this.isRepeat = !this.isRepeat;
       this.repeatBtn.classList.toggle('active', this.isRepeat);
     });
+
+    if (this.autoplayBtn) {
+      this.autoplayBtn.classList.toggle('active', this.isAutoplay);
+      this.autoplayBtn.addEventListener('click', () => {
+        this.isAutoplay = !this.isAutoplay;
+        localStorage.setItem('sonora_autoplay', this.isAutoplay);
+        this.autoplayBtn.classList.toggle('active', this.isAutoplay);
+        if (this.radioIndicator) {
+          this.radioIndicator.style.display = this.isAutoplay ? 'block' : 'none';
+        }
+        this.showToast(this.isAutoplay ? '✨ Endless Radio: Similar songs will autoplay' : 'Endless Radio Autoplay Off', this.isAutoplay ? '📻' : '⏸️');
+        if (this.isAutoplay && this.currentTrack && this.radioQueue.length === 0) {
+          this.prefetchRadioRecommendations(this.currentTrack);
+        }
+      });
+    }
 
     this.muteBtn.addEventListener('click', () => {
       this.audio.muted = !this.audio.muted;
