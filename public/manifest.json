@@ -1,12 +1,14 @@
 {
+  "id": "/",
   "name": "Sonora — Free Lossless Music",
   "short_name": "Sonora",
   "description": "Spotify-style autonomous music streaming — free, lossless, no subscription.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#1ed760",
-  "orientation": "any",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -21,13 +23,5 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["music", "entertainment"],
-  "screenshots": [],
-  "share_target": {
-    "action": "/",
-    "method": "GET",
-    "params": {
-      "text": "query"
-    }
-  }
+  "categories": ["music", "entertainment"]
 }

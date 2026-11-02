@@ -107,6 +107,10 @@
         </div>
 
         <div style="display:flex; align-items:center; gap:14px;">
+          <button class="btn-install-pwa" id="btn-install-pwa" style="display:none;" title="Install Sonora App">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Install App</span>
+          </button>
           <button class="btn-primary" id="btn-top-auto-import" style="width:auto; padding:8px 18px; font-size:0.85rem; box-shadow:none;">
             <span>⚡ Import Song by Name/URL</span>
           </button>
@@ -122,6 +126,20 @@
 
       <!-- Scrollable Main Content -->
       <div class="content-scroll" id="content-scroll">
+        <!-- Prominent Mobile App Install Banner -->
+        <div class="mobile-install-banner" id="mobile-install-banner" style="display:none;">
+          <div class="banner-inner">
+            <div class="banner-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
+            </div>
+            <div class="banner-text">
+              <h4>Install Sonora App</h4>
+              <p>Install full Android app • Zero ads • Background playback</p>
+            </div>
+            <button class="btn-install-action" id="btn-banner-install">Install App</button>
+            <button class="btn-banner-dismiss" id="btn-banner-dismiss" aria-label="Close">&times;</button>
+          </div>
+        </div>
         <div id="view-container"></div>
       </div>
     </main>
@@ -193,6 +211,26 @@
       </div>
     </div>
   </footer>
+
+  <!-- MOBILE BOTTOM NAVIGATION (SPOTIFY NATIVE MOBILE APP STYLE) -->
+  <nav class="mobile-bottom-nav">
+    <button class="mobile-nav-item active" data-view="home">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="mobile-nav-item" data-view="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Search</span>
+    </button>
+    <button class="mobile-nav-item" data-view="library">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Library</span>
+    </button>
+    <button class="mobile-nav-item" id="btn-mobile-nav-install" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Install</span>
+    </button>
+  </nav>
 
   <!-- MODALS -->
 

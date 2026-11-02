@@ -87,10 +87,72 @@ class SonoraApp {
 
   async init() {
     this.setupEventListeners();
+    this.setupPwaInstall();
     await this.fetchInitialData();
     this.render();
     this.setupAudioEvents();
     this.startAutoSyncPolling();
+  }
+
+  setupPwaInstall() {
+    let deferredPrompt = null;
+    const btnTopInstall = document.getElementById('btn-install-pwa');
+    const bannerInstall = document.getElementById('mobile-install-banner');
+    const btnBannerInstall = document.getElementById('btn-banner-install');
+    const btnBannerDismiss = document.getElementById('btn-banner-dismiss');
+    const btnMobileNavInstall = document.getElementById('btn-mobile-nav-install');
+
+    const triggerPrompt = async () => {
+      if (!deferredPrompt) {
+        this.showToast('Tap browser menu (⋮) & tap "Install App" or "Add to Home screen"', '📲');
+        return;
+      }
+      deferredPrompt.prompt();
+      try {
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          this.showToast('Installing Sonora App...', '🚀');
+          if (btnTopInstall) btnTopInstall.style.display = 'none';
+          if (bannerInstall) bannerInstall.style.display = 'none';
+          if (btnMobileNavInstall) btnMobileNavInstall.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('PWA prompt error:', err);
+      }
+      deferredPrompt = null;
+    };
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (btnTopInstall) btnTopInstall.style.display = 'inline-flex';
+      if (bannerInstall) bannerInstall.style.display = 'block';
+      if (btnMobileNavInstall) btnMobileNavInstall.style.display = 'flex';
+    });
+
+    if (btnTopInstall) btnTopInstall.addEventListener('click', triggerPrompt);
+    if (btnBannerInstall) btnBannerInstall.addEventListener('click', triggerPrompt);
+    if (btnMobileNavInstall) btnMobileNavInstall.addEventListener('click', triggerPrompt);
+
+    if (btnBannerDismiss) {
+      btnBannerDismiss.addEventListener('click', () => {
+        if (bannerInstall) bannerInstall.style.display = 'none';
+      });
+    }
+
+    window.addEventListener('appinstalled', () => {
+      this.showToast('Sonora App installed successfully! Enjoy lossless streaming.', '✅');
+      if (btnTopInstall) btnTopInstall.style.display = 'none';
+      if (bannerInstall) bannerInstall.style.display = 'none';
+      if (btnMobileNavInstall) btnMobileNavInstall.style.display = 'none';
+    });
+
+    // If already in standalone app mode
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      if (btnTopInstall) btnTopInstall.style.display = 'none';
+      if (bannerInstall) bannerInstall.style.display = 'none';
+      if (btnMobileNavInstall) btnMobileNavInstall.style.display = 'none';
+    }
   }
 
   // -----------------------------------------------------------
@@ -895,11 +957,17 @@ class SonoraApp {
   // Event Listeners
   // -----------------------------------------------------------
   setupEventListeners() {
-    document.querySelectorAll('.nav-item').forEach(item => {
+    document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(item => {
       item.addEventListener('click', () => {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        item.classList.add('active');
-        this.currentView = item.getAttribute('data-view');
+        const view = item.getAttribute('data-view');
+        document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(n => {
+          if (n.getAttribute('data-view') === view) {
+            n.classList.add('active');
+          } else {
+            n.classList.remove('active');
+          }
+        });
+        this.currentView = view;
         this.render();
       });
     });
