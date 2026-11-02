@@ -29,10 +29,35 @@ let dbVersion = Date.now();
 
 // Helper to read / write DB
 function getDB() {
+  const seedFile = path.join(__dirname, 'data', 'seed_catalog.json');
   if (!fs.existsSync(DATA_FILE)) {
+    if (fs.existsSync(seedFile)) {
+      try {
+        const seed = JSON.parse(fs.readFileSync(seedFile, 'utf-8'));
+        fs.writeFileSync(DATA_FILE, JSON.stringify(seed, null, 2), 'utf-8');
+        return seed;
+      } catch (e) {}
+    }
     return { tracks: [], playlists: [], favorites: [] };
   }
-  return JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+  let db = { tracks: [], playlists: [], favorites: [] };
+  try {
+    db = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+  } catch (e) {}
+
+  // Auto-heal: If tracks got cleared, restore from seed catalog immediately
+  if (!db.tracks || db.tracks.length === 0) {
+    if (fs.existsSync(seedFile)) {
+      try {
+        const seed = JSON.parse(fs.readFileSync(seedFile, 'utf-8'));
+        db.tracks = seed.tracks || [];
+        db.playlists = (db.playlists && db.playlists.length > 0) ? db.playlists : (seed.playlists || []);
+        fs.writeFileSync(DATA_FILE, JSON.stringify(db, null, 2), 'utf-8');
+        console.log(`[Auto-Heal Engine] Restored ${db.tracks.length} tracks from seed catalog.`);
+      } catch (e) {}
+    }
+  }
+  return db;
 }
 
 function saveDB(data) {
@@ -78,9 +103,9 @@ async function autoScanFolder() {
     const db = getDB();
     let hasChanges = false;
 
-    // Prune tracks whose audio files no longer exist on disk
+    // Only prune local uploaded files if their file was deleted; NEVER prune cloud / YouTube tracks!
     const initialCount = db.tracks.length;
-    db.tracks = db.tracks.filter(t => fs.existsSync(path.join(AUDIO_DIR, t.filename)));
+    db.tracks = db.tracks.filter(t => t.id?.startsWith('yt-') || t.license?.includes('Spotify') || t.license?.includes('Cloud') || fs.existsSync(path.join(AUDIO_DIR, t.filename)));
     if (db.tracks.length !== initialCount) {
       hasChanges = true;
       console.log(`[Auto-Import Engine] Pruned ${initialCount - db.tracks.length} missing tracks.`);
