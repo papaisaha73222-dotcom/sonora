@@ -1,37 +1,15 @@
 {
   "tracks": [
     {
-      "id": "yt-Gy0kTWVZsDg",
-      "title": "Amake Amar Moto Thakte Dao",
-      "artist": "Anupam Roy",
-      "album": "Bangla Top Chartbusters",
-      "genre": "Bangla Hits",
-      "year": 2026,
-      "filename": "Gy0kTWVZsDg.mp3",
-      "cover": "/covers/cover_Gy0kTWVZsDg.jpg",
-      "duration": 321,
-      "audioQuality": "HQ MASTER (320kbps)",
-      "badgeColor": "#1ed760",
-      "specs": {
-        "format": "MP3 / 320kbps",
-        "sampleRate": 44100,
-        "bitDepth": 16,
-        "bitrate": "320 kbps",
-        "channels": 2
-      },
-      "license": "Spotify & YT Music Auto-Feed",
-      "plays": 258025
-    },
-    {
-      "id": "yt-TUVcZfQe-Kw",
-      "title": "Levitating",
-      "artist": "Dua Lipa",
+      "id": "yt-H5v3kku4y6Q",
+      "title": "As It Was",
+      "artist": "Harry Styles",
       "album": "Global Spotify Top Viral",
       "genre": "Global Pop",
       "year": 2026,
-      "filename": "TUVcZfQe-Kw.mp3",
-      "cover": "/covers/cover_TUVcZfQe-Kw.jpg",
-      "duration": 230,
+      "filename": "H5v3kku4y6Q.mp3",
+      "cover": "/covers/cover_H5v3kku4y6Q.jpg",
+      "duration": 166,
       "audioQuality": "HQ MASTER (320kbps)",
       "badgeColor": "#1ed760",
       "specs": {
@@ -42,29 +20,7 @@
         "channels": 2
       },
       "license": "Spotify & YT Music Auto-Feed",
-      "plays": 255750
-    },
-    {
-      "id": "yt-mZQH8CPQ-wo",
-      "title": "With You",
-      "artist": "AP Dhillon",
-      "album": "Desi Hip Hop & Punjabi",
-      "genre": "Desi Hip Hop",
-      "year": 2026,
-      "filename": "mZQH8CPQ-wo.mp3",
-      "cover": "/covers/cover_mZQH8CPQ-wo.jpg",
-      "duration": 155,
-      "audioQuality": "HQ MASTER (320kbps)",
-      "badgeColor": "#1ed760",
-      "specs": {
-        "format": "MP3 / 320kbps",
-        "sampleRate": 44100,
-        "bitDepth": 16,
-        "bitrate": "320 kbps",
-        "channels": 2
-      },
-      "license": "Spotify & YT Music Auto-Feed",
-      "plays": 253875
+      "plays": 254150
     },
     {
       "id": "yt-Wpm2kgsUoA0",
@@ -1197,18 +1153,18 @@
       "cover": "/covers/cover_spotify_tophits.svg",
       "trackIds": [
         "yt-PfH7jq_uSCM",
-        "yt-51zjlMhdSTE",
+        "yt-eVli-tstM5E",
         "yt-d5gf9dXbPi0",
         "yt-fHI8X4OXluQ",
-        "yt-TUVcZfQe-Kw",
-        "yt-V1Z586zoeeE",
-        "yt-11T6kF66dKY",
-        "yt-HU08BcK5SUY",
-        "yt-eVli-tstM5E",
-        "yt-V9PVRfjEBTI",
-        "yt-PCBZOSM8h5U",
         "yt-WHuBW3qKm9g",
         "yt-H5v3kku4y6Q",
+        "yt-11T6kF66dKY",
+        "yt-HU08BcK5SUY",
+        "yt-51zjlMhdSTE",
+        "yt-TUVcZfQe-Kw",
+        "yt-V1Z586zoeeE",
+        "yt-V9PVRfjEBTI",
+        "yt-PCBZOSM8h5U",
         "yt-kPa7bsKwL-c",
         "yt-Oa_RSwwpPaA"
       ]
@@ -1244,11 +1200,11 @@
         "yt-9c1NIrAqXe4",
         "yt-a7V9bUwc4cU",
         "yt-L-arhlgPiy8",
-        "yt-Gy0kTWVZsDg",
+        "yt-d210Ls13Gx0",
         "yt-5hJpFu3vPc0",
         "yt-O8yq399dsyk",
         "yt-GyfaHkxZnlo",
-        "yt-d210Ls13Gx0",
+        "yt-Gy0kTWVZsDg",
         "yt-vYsfSlEBh5Y",
         "yt--feVteC_gGM",
         "track-bangla-acoustic"

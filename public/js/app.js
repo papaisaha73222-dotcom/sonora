@@ -250,50 +250,36 @@ class SonoraApp {
   // -----------------------------------------------------------
   initAudioContext() {
     if (this.visualizerInitialized) return;
-    try {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      this.audioCtx = new AudioContext();
-      this.analyser = this.audioCtx.createAnalyser();
-      this.analyser.fftSize = 64;
-
-      this.sourceNode = this.audioCtx.createMediaElementSource(this.audio);
-      this.sourceNode.connect(this.analyser);
-      this.analyser.connect(this.audioCtx.destination);
-
-      this.visualizerInitialized = true;
-      this.startVisualizer();
-    } catch (e) {
-      console.warn('Audio Context init:', e);
-    }
+    this.visualizerInitialized = true;
+    this.startVisualizer();
   }
 
   startVisualizer() {
-    if (!this.analyser) return;
-    const bufferLength = this.analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-
+    if (!this.canvas || !this.canvasCtx) return;
+    let phase = 0;
     const draw = () => {
       requestAnimationFrame(draw);
-      this.analyser.getByteFrequencyData(dataArray);
-
       const width = this.canvas.width;
       const height = this.canvas.height;
       this.canvasCtx.clearRect(0, 0, width, height);
 
-      const barWidth = (width / bufferLength) * 1.6;
-      let x = 0;
+      if (!this.isPlaying) return;
 
-      for (let i = 0; i < bufferLength; i++) {
-        const barHeight = (dataArray[i] / 255) * height;
+      phase += 0.08;
+      const barCount = 18;
+      const barWidth = (width / barCount) - 2;
 
-        const gradient = this.canvasCtx.createLinearGradient(0, height, 0, 0);
-        gradient.addColorStop(0, '#10b981');
-        gradient.addColorStop(0.6, '#1ed760');
-        gradient.addColorStop(1, '#ffffff');
+      for (let i = 0; i < barCount; i++) {
+        const sinVal = Math.sin(phase + i * 0.45);
+        const cosVal = Math.cos(phase * 0.8 + i * 0.3);
+        const barHeight = Math.max(4, Math.abs(sinVal * cosVal) * height * 0.95);
+        const x = i * (barWidth + 2);
+        const y = height - barHeight;
 
-        this.canvasCtx.fillStyle = gradient;
-        this.canvasCtx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
-        x += barWidth + 1;
+        this.canvasCtx.fillStyle = '#1ed760';
+        this.canvasCtx.shadowBlur = 6;
+        this.canvasCtx.shadowColor = '#1ed760';
+        this.canvasCtx.fillRect(x, y, barWidth, barHeight);
       }
     };
     draw();
@@ -305,6 +291,7 @@ class SonoraApp {
     this.playedHistory.add(track.id);
 
     this.audio.src = `/api/stream/${track.id}`;
+    this.audio.load();
 
     // Update Player Bar
     this.playerTitle.innerText = track.title;
