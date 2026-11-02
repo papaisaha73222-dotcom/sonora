@@ -152,16 +152,14 @@ def sync_feed_item(item_info, category, genre, pl_cover):
             db = get_current_db()
             existing_track = next((t for t in db.get("tracks", []) if t["id"] == track_id or t["filename"] == mp3_filename), None)
             
-            # If already downloaded and registered in db with good title
-            if os.path.exists(mp3_path) and existing_track and existing_track.get("title") != vid_id:
-                print(f"[Auto-Feed Engine] Already present in library: {existing_track.get('title')}")
+            # If already registered in db with good title, skip
+            if existing_track and existing_track.get("title") != vid_id:
+                print(f"[Auto-Feed Engine] Already active in library: {existing_track.get('title')}")
                 return track_id
-                
-            # If mp3 doesn't exist on disk, download it
-            if not os.path.exists(mp3_path):
-                print(f"[Auto-Feed Engine] Downloading new trending hit: {entry.get('title')}")
-                update_status("syncing", f"Downloading 320kbps master: {target_title or entry.get('title')}", current_track=target_title or entry.get('title'))
-                ydl.download([query])
+
+            # Zero-Storage Cloud Sync: Fetch lightweight metadata & thumbnail without eating disk space
+            print(f"[Auto-Feed Engine] Auto-syncing trending chart hit: {entry.get('title')}")
+            update_status("syncing", f"Auto-syncing chart hit: {target_title or entry.get('title')}", current_track=target_title or entry.get('title'))
             
             # Handle Cover Image
             cover_filename = f"cover_{vid_id}.jpg"

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <radialGradient id="disc" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#18181b" />
+      <stop offset="70%" stop-color="#09090b" />
+      <stop offset="100%" stop-color="#000000" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background gradient -->
+  <rect width="500" height="500" rx="24" fill="url(#grad)" />
+  
+  <!-- Vinyl disc visual -->
+  <circle cx="250" cy="220" r="140" fill="url(#disc)" opacity="0.85" />
+  <circle cx="250" cy="220" r="110" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+  <circle cx="250" cy="220" r="80" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2" />
+  <circle cx="250" cy="220" r="45" fill="url(#grad)" />
+  <circle cx="250" cy="220" r="12" fill="#09090b" />
+  
+  <!-- Waveform accents -->
+  <path d="M 60 410 Q 150 360, 250 410 T 440 410" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Text Info -->
+  <rect x="40" y="40" width="130" height="26" rx="6" fill="rgba(0,0,0,0.4)" />
+  <text x="105" y="58" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="800" fill="#ffffff" letter-spacing="1.5" text-anchor="middle">24-BIT / 48kHz</text>
+  
+  <text x="40" y="445" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Cyberpunk Drift</text>
+  <text x="40" y="472" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="rgba(255,255,255,0.75)" letter-spacing="1">ELECTRONIC</text>
+</svg>

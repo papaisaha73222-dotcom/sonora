@@ -34,7 +34,9 @@
   --topbar-height: 70px;
 
   --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --transition: all 0.22s cubic-bezier(0.2, 0, 0, 1);
+  --transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  --liquid-spring: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --liquid-glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 * {
@@ -52,6 +54,72 @@ body {
   width: 100vw;
   user-select: none;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================
+   DYNAMIC LIQUID FLUID BACKDROP & MORPHING BLOBS
+   ========================================== */
+.liquid-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.liquid-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.32;
+  animation: liquidMorph 22s ease-in-out infinite alternate;
+  will-change: transform, border-radius;
+}
+
+.liquid-blob-1 {
+  top: -160px;
+  left: 15%;
+  width: 720px;
+  height: 720px;
+  background: radial-gradient(circle, #1ed760 0%, rgba(30, 215, 96, 0.25) 55%, transparent 75%);
+}
+
+.liquid-blob-2 {
+  bottom: -200px;
+  right: 10%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.45) 0%, rgba(4, 120, 87, 0.18) 50%, transparent 75%);
+  animation-duration: 28s;
+  animation-direction: alternate-reverse;
+}
+
+.liquid-blob-3 {
+  top: 40%;
+  left: 55%;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.22) 0%, transparent 70%);
+  animation-duration: 18s;
+}
+
+@keyframes liquidMorph {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  }
+  33% {
+    transform: translate(70px, -50px) scale(1.14) rotate(45deg);
+    border-radius: 70% 30% 46% 54% / 30% 29% 71% 70%;
+  }
+  66% {
+    transform: translate(-50px, 70px) scale(0.92) rotate(90deg);
+    border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+  }
+  100% {
+    transform: translate(40px, 40px) scale(1.08) rotate(180deg);
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  }
 }
 
 /* Background Liquid Ambient Glow */
@@ -484,23 +552,42 @@ body::before {
 }
 
 .quick-play-tile {
-  background: var(--bg-glass-card);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shine);
-  border-radius: 8px;
+  background: rgba(22, 22, 28, 0.45);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), 0 8px 24px rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   overflow: hidden;
   cursor: pointer;
-  transition: var(--transition);
+  transition: var(--liquid-spring);
   position: relative;
 }
 
+.quick-play-tile::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.quick-play-tile:hover::after {
+  left: 150%;
+}
+
 .quick-play-tile:hover {
-  background: var(--bg-glass-hover);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+  background: rgba(35, 35, 48, 0.65);
+  border-color: rgba(30, 215, 96, 0.4);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.28), 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(30, 215, 96, 0.15);
 }
 
 .tile-img {
@@ -508,6 +595,11 @@ body::before {
   height: 72px;
   object-fit: cover;
   flex-shrink: 0;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.quick-play-tile:hover .tile-img {
+  transform: scale(1.08);
 }
 
 .tile-text {
@@ -522,8 +614,8 @@ body::before {
 }
 
 .tile-play-btn {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--spotify-green);
   color: #000;
@@ -531,10 +623,10 @@ body::before {
   align-items: center;
   justify-content: center;
   margin-right: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 6px 16px rgba(30, 215, 96, 0.5);
   opacity: 0;
-  transform: scale(0.9);
-  transition: var(--transition);
+  transform: scale(0.85);
+  transition: var(--liquid-spring);
 }
 
 .quick-play-tile:hover .tile-play-btn {
@@ -1540,5 +1632,87 @@ body::before {
   font-size: 0.95rem;
   font-weight: 900;
   flex-shrink: 0;
+}
+
+/* ==========================================
+   100M+ CLOUD STREAMING SEARCH RESULTS UI
+   ========================================== */
+.cloud-search-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 32px 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cloud-search-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.cloud-universe-pill {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #000;
+  background: var(--spotify-green);
+  padding: 4px 10px;
+  border-radius: 20px;
+  box-shadow: 0 0 12px var(--spotify-green-glow);
+}
+
+.cloud-search-loader {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.cloud-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(30, 215, 96, 0.2);
+  border-top-color: var(--spotify-green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.btn-save-cloud {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-save-cloud:hover {
+  background: var(--spotify-green);
+  color: #000;
+  border-color: var(--spotify-green);
+  transform: scale(1.05);
+}
+
+.btn-save-cloud.saved {
+  background: rgba(30, 215, 96, 0.2);
+  color: var(--spotify-green);
+  border-color: rgba(30, 215, 96, 0.4);
 }
 

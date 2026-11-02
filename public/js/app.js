@@ -15,6 +15,9 @@ class SonoraApp {
     this.activeFilter = 'all';
     this.activePlaylistId = null;
     this.dbVersion = null;
+    this.cloudResults = [];
+    this.isSearchingCloud = false;
+    this.cloudSearchDebounce = null;
 
     // DOM Elements
     this.audio = document.getElementById('audio-player');
@@ -449,20 +452,20 @@ class SonoraApp {
           <div class="auto-feed-badge-row">
             <span class="feed-pulse-indicator">
               <span class="pulse-dot"></span>
-              ${isSyncing ? 'Syncing Now' : 'Auto-Feed Active'}
+              ${isSyncing ? 'Auto-Syncing Charts...' : '100% Autonomous Autopilot'}
             </span>
             <span class="feed-status-text" id="feed-status-detail">
-              ${this.feedStatus?.message || `Standby • ${this.tracks.length} songs ready in library`}
+              ${this.feedStatus?.message || `Continuous Background Sync Active • Every 30m • 0 MB storage`}
             </span>
           </div>
-          <div class="auto-feed-title">Autonomous Cloud Feed (Spotify & YouTube Music)</div>
+          <div class="auto-feed-title">100% Automatic Music Feed (Spotify & YouTube Music)</div>
           <div class="auto-feed-desc">
-            Trending songs are automatically fetched, converted to 320kbps / Lossless, and added to your playlists every 30 minutes. Zero manual work required.
+            Sonora automatically discovers and adds new trending tracks to your library and playlists in the background. You never need to manually download, upload, or sync anything.
           </div>
         </div>
         <div class="auto-feed-right">
-          <button class="btn-sync-feed" id="btn-trigger-autofeed" ${isSyncing ? 'disabled' : ''}>
-            ${isSyncing ? '<span class="sync-spin">🔄</span> Syncing Charts...' : '<span>⚡ Sync Latest Charts Now</span>'}
+          <button class="btn-sync-feed" id="btn-trigger-autofeed" ${isSyncing ? 'disabled' : ''} title="Runs 100% automatically in background. Click to force check now.">
+            ${isSyncing ? '<span class="sync-spin">🔄</span> Syncing...' : '<span>⚡ Force Check Now</span>'}
           </button>
         </div>
       </div>
@@ -588,22 +591,156 @@ class SonoraApp {
   }
 
   renderSearchView() {
-    const query = this.searchInput.value.trim().toLowerCase();
-    const results = query
+    const rawQuery = this.searchInput.value.trim();
+    const query = rawQuery.toLowerCase();
+    const localResults = query
       ? this.tracks.filter(t =>
-          t.title.toLowerCase().includes(query) ||
-          t.artist.toLowerCase().includes(query) ||
-          t.album.toLowerCase().includes(query) ||
-          t.genre.toLowerCase().includes(query)
+          (t.title || '').toLowerCase().includes(query) ||
+          (t.artist || '').toLowerCase().includes(query) ||
+          (t.album || '').toLowerCase().includes(query) ||
+          (t.genre || '').toLowerCase().includes(query)
         )
       : this.tracks;
 
+    let cloudHtml = '';
+    if (rawQuery.length >= 2) {
+      if (this.isSearchingCloud) {
+        cloudHtml = `
+          <div class="cloud-search-header">
+            <div class="cloud-search-title">
+              <span>🌍 100M+ Global Cloud Catalog</span>
+              <span class="cloud-universe-pill">Searching</span>
+            </div>
+          </div>
+          <div class="cloud-search-loader">
+            <div class="cloud-spinner"></div>
+            <span>Searching 100,000,000+ songs on YouTube Music & Spotify...</span>
+          </div>
+        `;
+      } else if (this.cloudResults.length > 0) {
+        cloudHtml = `
+          <div class="cloud-search-header">
+            <div class="cloud-search-title">
+              <span>🌍 100M+ Global Cloud Catalog (${this.cloudResults.length} tracks found)</span>
+              <span class="cloud-universe-pill">Instant Stream</span>
+            </div>
+            <span style="font-size:0.8rem; color:var(--text-secondary);">Direct stream • 0 MB storage consumed</span>
+          </div>
+          ${this.renderCloudTrackTable(this.cloudResults)}
+        `;
+      } else {
+        cloudHtml = `
+          <div class="cloud-search-header">
+            <div class="cloud-search-title">
+              <span>🌍 100M+ Global Cloud Catalog</span>
+              <span class="cloud-universe-pill">YouTube & Spotify</span>
+            </div>
+          </div>
+          <p style="color:var(--text-muted); padding: 16px 0;">No direct cloud results found. Try another search query.</p>
+        `;
+      }
+    }
+
     this.viewContainer.innerHTML = `
       <div class="section-header">
-        <h2>${query ? `Search Results for "${query}" (${results.length})` : 'Browse All Songs'}</h2>
+        <h2>${rawQuery ? `Local Library Matches (${localResults.length})` : 'Browse All Songs'}</h2>
       </div>
-      ${this.renderTrackTable(results)}
+      ${localResults.length > 0 ? this.renderTrackTable(localResults) : '<p style="color:var(--text-muted); padding: 14px 0;">No matching songs in your local library.</p>'}
+      ${cloudHtml}
     `;
+
+    this.wireCloudActions();
+  }
+
+  renderCloudTrackTable(cloudList) {
+    return `
+      <table class="track-table">
+        <thead>
+          <tr>
+            <th class="track-num-cell">#</th>
+            <th>Title</th>
+            <th>Source</th>
+            <th>Quality</th>
+            <th>Duration</th>
+            <th style="text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${cloudList.map((t, idx) => {
+            const isSaved = this.tracks.some(lt => lt.id === t.id);
+            return `
+              <tr class="track-row cloud-track-row ${this.currentTrack?.id === t.id ? 'playing' : ''}" data-cloud-id="${t.id}">
+                <td class="track-num-cell">${idx + 1}</td>
+                <td>
+                  <div class="row-track-info">
+                    <img src="${t.cover}" alt="" class="row-cover" onerror="this.src='/covers/cover_spotify_tophits.svg'">
+                    <div class="row-text">
+                      <span class="row-title">${t.title}</span>
+                      <span class="row-artist">${t.artist}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="row-album" style="color:var(--spotify-green); font-size:0.82rem; font-weight:700;">
+                  ☁️ 100M+ Cloud Stream
+                </td>
+                <td class="row-specs">
+                  <span class="row-badge">HQ 320kbps</span>
+                </td>
+                <td>${this.formatTime(t.duration)}</td>
+                <td class="row-actions">
+                  <button class="btn-save-cloud ${isSaved ? 'saved' : ''}" data-track-idx="${idx}" title="Save to permanent library">
+                    ${isSaved ? '✓ Saved' : '+ Save'}
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  wireCloudActions() {
+    document.querySelectorAll('.cloud-track-row').forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-save-cloud')) return;
+        const id = row.getAttribute('data-cloud-id');
+        const track = this.cloudResults.find(t => t.id === id);
+        if (track) {
+          this.selectTrack(track, true);
+          this.showToast(`▶️ Streaming: ${track.title} directly from cloud!`, '☁️');
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-save-cloud').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.getAttribute('data-track-idx'), 10);
+        const track = this.cloudResults[idx];
+        if (!track) return;
+
+        btn.innerText = 'Saving...';
+        btn.disabled = true;
+        try {
+          const res = await fetch('/api/tracks/save-cloud', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ track })
+          });
+          const data = await res.json();
+          if (data.success) {
+            btn.classList.add('saved');
+            btn.innerText = '✓ Saved';
+            this.showToast(`✨ ${track.title} added to your library!`, '💾');
+            await this.fetchInitialData();
+          }
+        } catch (err) {
+          btn.innerText = '+ Save';
+          btn.disabled = false;
+        }
+      });
+    });
   }
 
   renderLibraryView() {
@@ -859,20 +996,51 @@ class SonoraApp {
 
     // Search
     this.searchInput.addEventListener('input', () => {
-      if (this.searchInput.value.length > 0) {
+      const q = this.searchInput.value.trim();
+      if (q.length > 0) {
         this.clearSearchBtn.style.display = 'block';
         this.currentView = 'search';
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.querySelector('[data-view="search"]').classList.add('active');
+        document.querySelector('[data-view="search"]')?.classList.add('active');
+        this.render();
+
+        clearTimeout(this.cloudSearchDebounce);
+        if (q.length >= 2) {
+          this.isSearchingCloud = true;
+          this.render();
+
+          this.cloudSearchDebounce = setTimeout(async () => {
+            try {
+              const res = await fetch(`/api/search-cloud?q=${encodeURIComponent(q)}`);
+              const data = await res.json();
+              this.cloudResults = data.results || [];
+            } catch (err) {
+              console.error('Cloud search error:', err);
+              this.cloudResults = [];
+            } finally {
+              this.isSearchingCloud = false;
+              if (this.currentView === 'search') {
+                this.renderSearchView();
+              }
+            }
+          }, 400);
+        } else {
+          this.cloudResults = [];
+          this.isSearchingCloud = false;
+        }
       } else {
         this.clearSearchBtn.style.display = 'none';
+        this.cloudResults = [];
+        this.isSearchingCloud = false;
+        this.render();
       }
-      this.render();
     });
 
     this.clearSearchBtn.addEventListener('click', () => {
       this.searchInput.value = '';
       this.clearSearchBtn.style.display = 'none';
+      this.cloudResults = [];
+      this.isSearchingCloud = false;
       this.render();
     });
 

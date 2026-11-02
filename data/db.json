@@ -1,6 +1,204 @@
 {
   "tracks": [
     {
+      "id": "yt-PCBZOSM8h5U",
+      "title": "I Had Some Help",
+      "artist": "Post Malone, Morgan Wallen",
+      "album": "Global Spotify Top Viral",
+      "genre": "Global Pop",
+      "year": 2026,
+      "filename": "PCBZOSM8h5U.mp3",
+      "cover": "/covers/cover_PCBZOSM8h5U.jpg",
+      "duration": 178,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 254450
+    },
+    {
+      "id": "yt-H5v3kku4y6Q",
+      "title": "As It Was",
+      "artist": "Harry Styles",
+      "album": "Global Spotify Top Viral",
+      "genre": "Global Pop",
+      "year": 2026,
+      "filename": "H5v3kku4y6Q.mp3",
+      "cover": "/covers/cover_H5v3kku4y6Q.jpg",
+      "duration": 166,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 254150
+    },
+    {
+      "id": "yt-V9PVRfjEBTI",
+      "title": "Birds of a Feather",
+      "artist": "Billie Eilish",
+      "album": "Global Spotify Top Viral",
+      "genre": "Global Pop",
+      "year": 2026,
+      "filename": "V9PVRfjEBTI.mp3",
+      "cover": "/covers/cover_V9PVRfjEBTI.jpg",
+      "duration": 231,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 255775
+    },
+    {
+      "id": "yt-Wpm2kgsUoA0",
+      "title": "Aaj Ki Raat (Stree 2)",
+      "artist": "Madhubanti Bagchi, Divya Kumar",
+      "album": "Bollywood Chartbusters",
+      "genre": "Bollywood Hits",
+      "year": 2026,
+      "filename": "Wpm2kgsUoA0.mp3",
+      "cover": "/covers/cover_Wpm2kgsUoA0.jpg",
+      "duration": 230,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 255750
+    },
+    {
+      "id": "yt-Oa_RSwwpPaA",
+      "title": "Beautiful Things",
+      "artist": "Benson Boone",
+      "album": "Global Spotify Top Viral",
+      "genre": "Global Pop",
+      "year": 2026,
+      "filename": "Oa_RSwwpPaA.mp3",
+      "cover": "/covers/cover_Oa_RSwwpPaA.jpg",
+      "duration": 193,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 254825
+    },
+    {
+      "id": "yt-kPa7bsKwL-c",
+      "title": "Die With A Smile",
+      "artist": "Lady Gaga, Bruno Mars",
+      "album": "Global Spotify Top Viral",
+      "genre": "Global Pop",
+      "year": 2026,
+      "filename": "kPa7bsKwL-c.mp3",
+      "cover": "/covers/cover_kPa7bsKwL-c.jpg",
+      "duration": 252,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 256300
+    },
+    {
+      "id": "yt-n_FCrCQ6-bA",
+      "title": "295",
+      "artist": "Sidhu Moose Wala",
+      "album": "Desi Hip Hop & Punjabi",
+      "genre": "Desi Hip Hop",
+      "year": 2026,
+      "filename": "n_FCrCQ6-bA.mp3",
+      "cover": "/covers/cover_n_FCrCQ6-bA.jpg",
+      "duration": 273,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 256825
+    },
+    {
+      "id": "yt-vYsfSlEBh5Y",
+      "title": "Amake Amar Moto Thakte Dao",
+      "artist": "Anupam Roy",
+      "album": "Bangla Top Chartbusters",
+      "genre": "Bangla Hits",
+      "year": 2026,
+      "filename": "vYsfSlEBh5Y.mp3",
+      "cover": "/covers/cover_vYsfSlEBh5Y.jpg",
+      "duration": 188,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 254700
+    },
+    {
+      "id": "yt-Umqb9KENgmk",
+      "title": "Tum Hi Ho (Aashiqui 2)",
+      "artist": "Arijit Singh, Mithoon",
+      "album": "Bollywood Chartbusters",
+      "genre": "Bollywood Hits",
+      "year": 2026,
+      "filename": "Umqb9KENgmk.mp3",
+      "cover": "/covers/cover_Umqb9KENgmk.jpg",
+      "duration": 267,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 256675
+    },
+    {
       "id": "yt-A66TYFdz8YA",
       "title": "Tu Aake Dekhle",
       "artist": "King",
@@ -994,34 +1192,41 @@
   "playlists": [
     {
       "id": "pl-spotify-global",
-      "name": "🔥 Spotify Global Top 50 Hits",
+      "name": "\ud83d\udd25 Spotify Global Top 50 Hits",
       "description": "Auto-synced Billboard & Spotify global chart-toppers streaming in 320kbps.",
       "cover": "/covers/cover_spotify_tophits.svg",
       "trackIds": [
         "yt-PfH7jq_uSCM",
         "yt-eVli-tstM5E",
-        "yt-d5gf9dXbPi0",
+        "yt-V9PVRfjEBTI",
         "yt-fHI8X4OXluQ",
         "yt-WHuBW3qKm9g",
+        "yt-H5v3kku4y6Q",
+        "yt-PCBZOSM8h5U",
+        "yt-HU08BcK5SUY",
+        "yt-kPa7bsKwL-c",
+        "yt-d5gf9dXbPi0",
         "yt-V1Z586zoeeE",
         "yt-11T6kF66dKY",
-        "yt-HU08BcK5SUY",
+        "yt-Oa_RSwwpPaA",
         "yt-51zjlMhdSTE"
       ]
     },
     {
       "id": "pl-bollywood-trending",
-      "name": "🔥 Bollywood Trending Chartbusters",
+      "name": "\ud83d\udd25 Bollywood Trending Chartbusters",
       "description": "Auto-synced top trending Bollywood hits from YouTube Music & Spotify India.",
       "cover": "/covers/cover_bollywood_hits.svg",
       "trackIds": [
+        "yt-Umqb9KENgmk",
         "yt-6RdS6wLu7RY",
         "yt-VAdGW7QDJiU",
         "yt-BBrQWOuE_pg",
         "yt-zkMwgFjtHzY",
         "yt-1tsCjcq0G-U",
-        "yt-BMofrZd8cQY",
+        "yt-Wpm2kgsUoA0",
         "yt-QKMTreKTpug",
+        "yt-BMofrZd8cQY",
         "yt-BjL7AuPsmEk",
         "yt-F_jU1KI82kw",
         "yt-Ref5bT8Tuk8",
@@ -1030,7 +1235,7 @@
     },
     {
       "id": "pl-bangla-viral",
-      "name": "🔥 Bangla Viral & Coke Studio Hits",
+      "name": "\ud83d\udd25 Bangla Viral & Coke Studio Hits",
       "description": "Auto-synced latest Bengali, Coke Studio Bangla & Folk masterpieces.",
       "cover": "/covers/cover_coke_studio.svg",
       "trackIds": [
@@ -1038,17 +1243,18 @@
         "yt-9c1NIrAqXe4",
         "yt-a7V9bUwc4cU",
         "yt-L-arhlgPiy8",
-        "yt--feVteC_gGM",
+        "yt-d210Ls13Gx0",
         "yt-5hJpFu3vPc0",
         "yt-O8yq399dsyk",
         "yt-GyfaHkxZnlo",
-        "yt-d210Ls13Gx0",
+        "yt-vYsfSlEBh5Y",
+        "yt--feVteC_gGM",
         "track-bangla-acoustic"
       ]
     },
     {
       "id": "pl-audiophile-lossless",
-      "name": "💎 Pure Lossless Studio Masters",
+      "name": "\ud83d\udc8e Pure Lossless Studio Masters",
       "description": "Uncompressed 24-bit / 96kHz and 16-bit Studio Master FLAC & WAV streams.",
       "cover": "/covers/cover_audiophile_lossless.svg",
       "trackIds": [
@@ -1062,13 +1268,14 @@
     },
     {
       "id": "pl-autofeed-desi-h",
-      "name": "🔥 Desi Hip Hop & Punjabi Viral",
+      "name": "\ud83d\udd25 Desi Hip Hop & Punjabi Viral",
       "description": "Top streaming Punjabi rap and Desi Hip Hop chartbusters.",
       "cover": "/covers/cover_spotify_tophits.svg",
       "trackIds": [
         "yt-fe9udc210tM",
-        "yt-QYvfY4MtLAI",
-        "yt-A66TYFdz8YA"
+        "yt-n_FCrCQ6-bA",
+        "yt-A66TYFdz8YA",
+        "yt-QYvfY4MtLAI"
       ]
     }
   ],

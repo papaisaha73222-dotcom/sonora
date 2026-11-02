@@ -2,5 +2,15 @@ node_modules/
 *.log
 .env
 data/db.json.bak
-audio/*.webp
+audio/*.mp3
+audio/*.wav
+audio/*.flac
+audio/*.ogg
 audio/*.webm
+audio/*.webp
+audio/*.part
+audio/*.ytdl
+download_*.py
+generate_*.py
+repair_*.py
+gen_icons.py
