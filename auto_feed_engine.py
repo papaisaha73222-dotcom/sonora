@@ -7,12 +7,19 @@ import yt_dlp
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-SONORA_DIR = r"C:\Users\USER\.gemini\antigravity\scratch\sonora"
+SONORA_DIR = os.path.dirname(os.path.abspath(__file__))
 AUDIO_DIR = os.path.join(SONORA_DIR, "audio")
 COVERS_DIR = os.path.join(SONORA_DIR, "covers")
 DATA_FILE = os.path.join(SONORA_DIR, "data", "db.json")
 STATUS_FILE = os.path.join(SONORA_DIR, "data", "feed_status.json")
-FFMPEG_BIN = r"C:\Users\USER\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.2-full_build\bin"
+
+if sys.platform == 'win32':
+    FFMPEG_BIN = r"C:\Users\USER\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.2-full_build\bin"
+else:
+    FFMPEG_BIN = ""
+
+if FFMPEG_BIN and os.path.exists(FFMPEG_BIN):
+    os.environ["PATH"] = FFMPEG_BIN + os.pathsep + os.environ.get("PATH", "")
 
 os.makedirs(AUDIO_DIR, exist_ok=True)
 os.makedirs(COVERS_DIR, exist_ok=True)

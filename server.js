@@ -173,16 +173,27 @@ autoScanFolder();
 // ==========================================
 // 2. Autonomous Background Feed Runner
 // ==========================================
-const PYTHON_EXE = 'C:\\Users\\USER\\AppData\\Local\\Programs\\Python\\Python312\\python.exe';
-const FFMPEG_DIR = 'C:\\Users\\USER\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin';
+const isWin = process.platform === 'win32';
+const PYTHON_EXE = isWin
+  ? 'C:\\Users\\USER\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
+  : (process.env.PYTHON_PATH || 'python3');
+
+const FFMPEG_DIR = isWin
+  ? 'C:\\Users\\USER\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin'
+  : '';
+
+function getSpawnEnv() {
+  const env = { ...process.env };
+  if (FFMPEG_DIR) {
+    env.PATH = `${path.dirname(PYTHON_EXE)};${FFMPEG_DIR};${process.env.PATH || ''}`;
+  }
+  return env;
+}
 
 function triggerAutoFeed() {
   console.log('[Autonomous Music Feed] Initiating scheduled chart sync...');
   const pyScript = path.join(__dirname, 'auto_feed_engine.py');
-  const env = {
-    ...process.env,
-    PATH: `${path.dirname(PYTHON_EXE)};${FFMPEG_DIR};${process.env.PATH || ''}`
-  };
+  const env = getSpawnEnv();
   execFile(PYTHON_EXE, [pyScript], { timeout: 600000, env }, (err, stdout, stderr) => {
     if (err) {
       console.warn('[Autonomous Feed Notice]', err.message);
@@ -283,7 +294,7 @@ app.get('/api/stream/:id', async (req, res) => {
       '-x',
       '--audio-format', 'mp3',
       '--audio-quality', '320K',
-      '--ffmpeg-location', FFMPEG_DIR,
+      ...(FFMPEG_DIR ? ['--ffmpeg-location', FFMPEG_DIR] : []),
       '-o', '-',
       '--quiet',
       '--no-warnings',
@@ -291,10 +302,7 @@ app.get('/api/stream/:id', async (req, res) => {
       ytUrl
     ];
 
-    const env = {
-      ...process.env,
-      PATH: `${path.dirname(PYTHON_EXE)};${FFMPEG_DIR};${process.env.PATH || ''}`
-    };
+    const env = getSpawnEnv();
 
     const ytdlProc = spawn(PYTHON_EXE, ['-m', 'yt_dlp', ...ytdlArgs], { env });
     ytdlProc.stdout.pipe(res);
@@ -319,10 +327,7 @@ app.post('/api/import-youtube', (req, res) => {
   }
 
   const scriptPath = path.join(__dirname, 'import_one.py');
-  const env = {
-    ...process.env,
-    PATH: `${path.dirname(PYTHON_EXE)};${FFMPEG_DIR};${process.env.PATH || ''}`
-  };
+  const env = getSpawnEnv();
   execFile(PYTHON_EXE, [scriptPath, query], { timeout: 60000, env }, (error, stdout, stderr) => {
     if (error) {
       console.error('Import error:', error, stderr);
@@ -375,10 +380,7 @@ app.get('/api/search-cloud', (req, res) => {
     '--quiet'
   ];
 
-  const env = {
-    ...process.env,
-    PATH: `${path.dirname(PYTHON_EXE)};${FFMPEG_DIR};${process.env.PATH || ''}`
-  };
+  const env = getSpawnEnv();
 
   execFile(PYTHON_EXE, ytdlArgs, { timeout: 15000, env }, (err, stdout, stderr) => {
     if (err) {
@@ -504,10 +506,7 @@ app.get('/api/recommendations', (req, res) => {
     '--quiet'
   ];
 
-  const env = {
-    ...process.env,
-    PATH: `${path.dirname(PYTHON_EXE)};${FFMPEG_DIR};${process.env.PATH || ''}`
-  };
+  const env = getSpawnEnv();
 
   execFile(PYTHON_EXE, ytdlArgs, { timeout: 15000, env }, (err, stdout) => {
     if (err) {

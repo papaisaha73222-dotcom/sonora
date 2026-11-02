@@ -1,6 +1,50 @@
 {
   "tracks": [
     {
+      "id": "yt-Gy0kTWVZsDg",
+      "title": "Amake Amar Moto Thakte Dao",
+      "artist": "Anupam Roy",
+      "album": "Bangla Top Chartbusters",
+      "genre": "Bangla Hits",
+      "year": 2026,
+      "filename": "Gy0kTWVZsDg.mp3",
+      "cover": "/covers/cover_Gy0kTWVZsDg.jpg",
+      "duration": 321,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 258025
+    },
+    {
+      "id": "yt-TUVcZfQe-Kw",
+      "title": "Levitating",
+      "artist": "Dua Lipa",
+      "album": "Global Spotify Top Viral",
+      "genre": "Global Pop",
+      "year": 2026,
+      "filename": "TUVcZfQe-Kw.mp3",
+      "cover": "/covers/cover_TUVcZfQe-Kw.jpg",
+      "duration": 230,
+      "audioQuality": "HQ MASTER (320kbps)",
+      "badgeColor": "#1ed760",
+      "specs": {
+        "format": "MP3 / 320kbps",
+        "sampleRate": 44100,
+        "bitDepth": 16,
+        "bitrate": "320 kbps",
+        "channels": 2
+      },
+      "license": "Spotify & YT Music Auto-Feed",
+      "plays": 255750
+    },
+    {
       "id": "yt-mZQH8CPQ-wo",
       "title": "With You",
       "artist": "AP Dhillon",
@@ -1153,20 +1197,20 @@
       "cover": "/covers/cover_spotify_tophits.svg",
       "trackIds": [
         "yt-PfH7jq_uSCM",
-        "yt-eVli-tstM5E",
-        "yt-V9PVRfjEBTI",
+        "yt-51zjlMhdSTE",
+        "yt-d5gf9dXbPi0",
         "yt-fHI8X4OXluQ",
         "yt-TUVcZfQe-Kw",
         "yt-V1Z586zoeeE",
-        "yt-PCBZOSM8h5U",
+        "yt-11T6kF66dKY",
         "yt-HU08BcK5SUY",
+        "yt-eVli-tstM5E",
+        "yt-V9PVRfjEBTI",
+        "yt-PCBZOSM8h5U",
         "yt-WHuBW3qKm9g",
         "yt-H5v3kku4y6Q",
         "yt-kPa7bsKwL-c",
-        "yt-d5gf9dXbPi0",
-        "yt-11T6kF66dKY",
-        "yt-Oa_RSwwpPaA",
-        "yt-51zjlMhdSTE"
+        "yt-Oa_RSwwpPaA"
       ]
     },
     {
@@ -1179,15 +1223,15 @@
         "yt-6RdS6wLu7RY",
         "yt-VAdGW7QDJiU",
         "yt-BBrQWOuE_pg",
-        "yt-zkMwgFjtHzY",
+        "yt-u2NAuswnTKs",
         "yt-1tsCjcq0G-U",
         "yt-Wpm2kgsUoA0",
         "yt-QKMTreKTpug",
+        "yt-zkMwgFjtHzY",
         "yt-BMofrZd8cQY",
         "yt-BjL7AuPsmEk",
         "yt-F_jU1KI82kw",
-        "yt-Ref5bT8Tuk8",
-        "yt-u2NAuswnTKs"
+        "yt-Ref5bT8Tuk8"
       ]
     },
     {
@@ -1200,10 +1244,11 @@
         "yt-9c1NIrAqXe4",
         "yt-a7V9bUwc4cU",
         "yt-L-arhlgPiy8",
-        "yt-d210Ls13Gx0",
+        "yt-Gy0kTWVZsDg",
         "yt-5hJpFu3vPc0",
         "yt-O8yq399dsyk",
         "yt-GyfaHkxZnlo",
+        "yt-d210Ls13Gx0",
         "yt-vYsfSlEBh5Y",
         "yt--feVteC_gGM",
         "track-bangla-acoustic"
@@ -1229,10 +1274,10 @@
       "description": "Top streaming Punjabi rap and Desi Hip Hop chartbusters.",
       "cover": "/covers/cover_spotify_tophits.svg",
       "trackIds": [
-        "yt-mZQH8CPQ-wo",
+        "yt-fe9udc210tM",
         "yt-QYvfY4MtLAI",
         "yt-A66TYFdz8YA",
-        "yt-fe9udc210tM",
+        "yt-mZQH8CPQ-wo",
         "yt-n_FCrCQ6-bA"
       ]
     }
